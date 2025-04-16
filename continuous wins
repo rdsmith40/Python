@@ -1,0 +1,191 @@
+using System;
+using System.Collections.Generic;
+
+namespace ContinuousWinsConference
+{
+    // Business Info Class
+    public class Business
+    {
+        public string Name { get; set; }
+        public string Location { get; set; }
+        public string Contact { get; set; }
+        public string Services { get; set; }
+        public string SocialMedia { get; set; }
+
+        public void DisplayInfo()
+        {
+            Console.WriteLine("=== Business Information ===");
+            Console.WriteLine($"Name: {Name}");
+            Console.WriteLine($"Location: {Location}");
+            Console.WriteLine($"Contact: {Contact}");
+            Console.WriteLine($"Services: {Services}");
+            Console.WriteLine($"Social Media: {SocialMedia}");
+        }
+    }
+
+    // Guest Speaker Class
+    public class GuestSpeaker
+    {
+        public string Name { get; set; }
+        public string Company { get; set; }
+        public string Bio { get; set; }
+        public string Topic { get; set; }
+        public string DateTime { get; set; }
+        public string PictureUrl { get; set; }  // Added field
+
+        public void Display()
+        {
+            Console.WriteLine("=== Guest Speaker ===");
+            Console.WriteLine($"Name: {Name}");
+            Console.WriteLine($"Company: {Company}");
+            Console.WriteLine($"Bio: {Bio}");
+            Console.WriteLine($"Topic: {Topic}");
+            Console.WriteLine($"Date & Time: {DateTime}");
+            Console.WriteLine($"Photo: {PictureUrl}");
+            Console.WriteLine("------------------------------");
+        }
+    }
+
+    // Guest Attendee Class
+    public class GuestAttendee
+    {
+        public string Name { get; set; }
+        public string BreakoutSession { get; set; }
+        public decimal TicketPrice { get; set; } = 200;
+
+        public void Display()
+        {
+            Console.WriteLine("=== Guest Attendee ===");
+            Console.WriteLine($"Name: {Name}");
+            Console.WriteLine($"Breakout Session: {BreakoutSession}");
+            Console.WriteLine($"Ticket Price: ${TicketPrice}");
+            Console.WriteLine("------------------------------");
+        }
+    }
+
+    class Program
+    {
+        static List<GuestSpeaker> speakers = new List<GuestSpeaker>();
+        static List<GuestAttendee> guests = new List<GuestAttendee>();
+
+        static void Main(string[] args)
+        {
+            Business biz = new Business
+            {
+                Name = "TechConnect Services",
+                Location = "Phoenix, AZ",
+                Contact = "info@techconnect.com",
+                Services = "Event Planning, Tech Services, Staffing",
+                SocialMedia = "@techconnect"
+            };
+
+            biz.DisplayInfo();
+            ShowMenu();
+        }
+
+        static void ShowMenu()
+        {
+            while (true)
+            {
+                Console.WriteLine("\n--- Main Menu ---");
+                Console.WriteLine("1. Register Guest Attendee");
+                Console.WriteLine("2. Register Guest Speaker");
+                Console.WriteLine("3. View All Guests");
+                Console.WriteLine("4. View All Guest Speakers");
+                Console.WriteLine("5. Exit");
+                Console.Write("Enter your choice: ");
+
+                string input = Console.ReadLine();
+
+                switch (input)
+                {
+                    case "1":
+                        RegisterGuest();
+                        break;
+                    case "2":
+                        RegisterSpeaker();
+                        break;
+                    case "3":
+                        DisplayGuests();
+                        break;
+                    case "4":
+                        DisplaySpeakers();
+                        break;
+                    case "5":
+                        Console.WriteLine("Thanks for using the system. Goodbye!");
+                        return;
+                    default:
+                        Console.WriteLine("Invalid input. Try again.");
+                        break;
+                }
+            }
+        }
+
+        static void RegisterGuest()
+        {
+            GuestAttendee guest = new GuestAttendee();
+            Console.Write("Enter your name: ");
+            guest.Name = Console.ReadLine();
+
+            Console.Write("Choose your breakout session (e.g., AI, Cloud, DevOps): ");
+            guest.BreakoutSession = Console.ReadLine();
+
+            guests.Add(guest);
+            Console.WriteLine("✅ Guest registered successfully!");
+        }
+
+        static void RegisterSpeaker()
+        {
+            GuestSpeaker speaker = new GuestSpeaker();
+
+            Console.Write("Enter your full name: ");
+            speaker.Name = Console.ReadLine();
+
+            Console.Write("Enter your company: ");
+            speaker.Company = Console.ReadLine();
+
+            Console.Write("Enter your bio: ");
+            speaker.Bio = Console.ReadLine();
+
+            Console.Write("Enter the topic you'll speak on: ");
+            speaker.Topic = Console.ReadLine();
+
+            Console.Write("Enter the date and time of your session: ");
+            speaker.DateTime = Console.ReadLine();
+
+            Console.Write("Enter picture URL or file name (e.g., jane.jpg): ");
+            speaker.PictureUrl = Console.ReadLine();
+
+            speakers.Add(speaker);
+            Console.WriteLine("✅ Speaker registered successfully!");
+        }
+
+        static void DisplayGuests()
+        {
+            if (guests.Count == 0)
+            {
+                Console.WriteLine("No guests registered yet.");
+                return;
+            }
+
+            foreach (var guest in guests)
+            {
+                guest.Display();
+            }
+        }
+
+        static void DisplaySpeakers()
+        {
+            if (speakers.Count == 0)
+            {
+                Console.WriteLine("No guest speakers registered yet.");
+                return;
+            }
+
+            foreach (var speaker in speakers)
+            {
+                speaker.Display();
+            }
+        }
+    }
+}
