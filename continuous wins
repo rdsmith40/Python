@@ -1,43 +1,23 @@
 using System;
 using System.Collections.Generic;
 
-namespace ContinuousWinsConference
+namespace ContinuousWINS
 {
-    // Business Info Class
-    public class Business
-    {
-        public string Name { get; set; }
-        public string Location { get; set; }
-        public string Contact { get; set; }
-        public string Services { get; set; }
-        public string SocialMedia { get; set; }
-
-        public void DisplayInfo()
-        {
-            Console.WriteLine("=== Business Information ===");
-            Console.WriteLine($"Name: {Name}");
-            Console.WriteLine($"Location: {Location}");
-            Console.WriteLine($"Contact: {Contact}");
-            Console.WriteLine($"Services: {Services}");
-            Console.WriteLine($"Social Media: {SocialMedia}");
-        }
-    }
-
-    // Guest Class
-    public class Guest
+    class Guest
     {
         public string FullName { get; set; }
         public string Email { get; set; }
-        public List<string> BreakoutSessions { get; set; } = new List<string>();
-        public bool PaidTicket { get; set; } = true;
+        public List<string> BreakoutSessions { get; set; }
+        public bool PaidTicket { get; set; }
         public bool NeedsHotel { get; set; }
         public bool BaggageCheck { get; set; }
+        public string BaggageClaimNumber { get; set; }
 
         public void Display()
         {
             Console.WriteLine($"\nGuest: {FullName}");
             Console.WriteLine($"Email: {Email}");
-            Console.WriteLine($"Ticket Purchased: ${(PaidTicket ? 200 : 0)}");
+            Console.WriteLine($"Ticket Purchased: ${(PaidTicket ? "200" : "Pending")}");
             Console.WriteLine("Breakout Sessions:");
             foreach (string session in BreakoutSessions)
             {
@@ -45,11 +25,12 @@ namespace ContinuousWinsConference
             }
             Console.WriteLine($"Hotel Room Needed: {(NeedsHotel ? "Yes" : "No")}");
             Console.WriteLine($"Courtesy Baggage Check: {(BaggageCheck ? "Yes" : "No")}");
+            if (BaggageCheck)
+                Console.WriteLine($"Baggage Claim Number: {BaggageClaimNumber}");
         }
     }
 
-    // Speaker Class
-    public class Speaker
+    class Speaker
     {
         public string FullName { get; set; }
         public string Company { get; set; }
@@ -59,6 +40,7 @@ namespace ContinuousWinsConference
         public string TimeSlot { get; set; }
         public bool NeedsHotel { get; set; }
         public bool BaggageCheck { get; set; }
+        public string BaggageClaimNumber { get; set; }
 
         public void Display()
         {
@@ -69,6 +51,8 @@ namespace ContinuousWinsConference
             Console.WriteLine($"Speaking Time: {TimeSlot}");
             Console.WriteLine($"Hotel Room Needed: {(NeedsHotel ? "Yes" : "No")}");
             Console.WriteLine($"Courtesy Baggage Check: {(BaggageCheck ? "Yes" : "No")}");
+            if (BaggageCheck)
+                Console.WriteLine($"Baggage Claim Number: {BaggageClaimNumber}");
         }
     }
 
@@ -79,16 +63,14 @@ namespace ContinuousWinsConference
 
         static void Main(string[] args)
         {
-            // Display Business Info
-            Business biz = new Business
-            {
-                Name = "NetworkX Events",
-                Location = "Phoenix, AZ",
-                Contact = "info@networkxevents.com | (555) 123-4567",
-                Services = "Event Admissions, Vendor Management, Online Menus, HR Staffing",
-                SocialMedia = "@NetworkXEvents"
-            };
-            biz.DisplayInfo();
+            Console.WriteLine("=== Welcome to Continuous WINS Conference Admissions ===");
+
+            Console.WriteLine("\n=== Business Info ===");
+            Console.WriteLine("Business Name: NetworkX Events");
+            Console.WriteLine("Location: Phoenix, AZ");
+            Console.WriteLine("Contact: info@networkxevents.com | (555) 123-4567");
+            Console.WriteLine("Services: Event Admissions, Vendor Management, Online Menus, HR Staffing");
+            Console.WriteLine("Socials: @NetworkXEvents\n");
 
             while (true)
             {
@@ -101,28 +83,38 @@ namespace ContinuousWinsConference
                 Console.Write("Choose an option: ");
                 string option = Console.ReadLine();
 
-                switch (option)
+                if (option == "1")
                 {
-                    case "1":
-                        RegisterGuest();
-                        break;
-                    case "2":
-                        RegisterSpeaker();
-                        break;
-                    case "3":
-                        ShowGuests();
-                        break;
-                    case "4":
-                        ShowSpeakers();
-                        break;
-                    case "5":
-                        Console.WriteLine("Thank you for using the system. Goodbye!");
-                        return;
-                    default:
-                        Console.WriteLine("Invalid choice. Try again.");
-                        break;
+                    RegisterGuest();
+                }
+                else if (option == "2")
+                {
+                    RegisterSpeaker();
+                }
+                else if (option == "3")
+                {
+                    ShowGuests();
+                }
+                else if (option == "4")
+                {
+                    ShowSpeakers();
+                }
+                else if (option == "5")
+                {
+                    Console.WriteLine("Thank you for using the system. Goodbye!");
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid choice. Try again.");
                 }
             }
+        }
+
+        static string GenerateClaimNumber()
+        {
+            Random rnd = new Random();
+            return "BAG" + rnd.Next(100000, 999999).ToString();
         }
 
         static void RegisterGuest()
@@ -154,8 +146,10 @@ namespace ContinuousWinsConference
                 FullName = name,
                 Email = email,
                 BreakoutSessions = sessions,
+                PaidTicket = true,
                 NeedsHotel = hotel,
-                BaggageCheck = baggage
+                BaggageCheck = baggage,
+                BaggageClaimNumber = baggage ? GenerateClaimNumber() : null
             });
 
             Console.WriteLine("✅ Guest registered successfully. Ticket charged: $200.");
@@ -173,13 +167,13 @@ namespace ContinuousWinsConference
             Console.Write("Bio: ");
             string bio = Console.ReadLine();
 
-            Console.Write("Photo description: ");
+            Console.Write("Photo description (i.e., 'Headshot with blue background'): ");
             string pic = Console.ReadLine();
 
             Console.Write("Speaking Subject: ");
             string subject = Console.ReadLine();
 
-            Console.Write("Time & Date of Presentation: ");
+            Console.Write("Time & Date of Presentation (e.g., 'Dec 13, 10:30 AM'): ");
             string time = Console.ReadLine();
 
             Console.Write("Do they need a hotel room? (yes/no): ");
@@ -197,7 +191,8 @@ namespace ContinuousWinsConference
                 Subject = subject,
                 TimeSlot = time,
                 NeedsHotel = hotel,
-                BaggageCheck = baggage
+                BaggageCheck = baggage,
+                BaggageClaimNumber = baggage ? GenerateClaimNumber() : null
             });
 
             Console.WriteLine("✅ Speaker registered successfully.");
