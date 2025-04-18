@@ -23,81 +23,85 @@ namespace ContinuousWinsConference
         }
     }
 
-    // Guest Speaker Class
-    public class GuestSpeaker
+    // Guest Class
+    public class Guest
     {
-        public string Name { get; set; }
-        public string Company { get; set; }
-        public string Bio { get; set; }
-        public string Topic { get; set; }
-        public string DateTime { get; set; }
-        public string PictureUrl { get; set; }  // Added field
+        public string FullName { get; set; }
+        public string Email { get; set; }
+        public List<string> BreakoutSessions { get; set; } = new List<string>();
+        public bool PaidTicket { get; set; } = true;
+        public bool NeedsHotel { get; set; }
+        public bool BaggageCheck { get; set; }
 
         public void Display()
         {
-            Console.WriteLine("=== Guest Speaker ===");
-            Console.WriteLine($"Name: {Name}");
-            Console.WriteLine($"Company: {Company}");
-            Console.WriteLine($"Bio: {Bio}");
-            Console.WriteLine($"Topic: {Topic}");
-            Console.WriteLine($"Date & Time: {DateTime}");
-            Console.WriteLine($"Photo: {PictureUrl}");
-            Console.WriteLine("------------------------------");
+            Console.WriteLine($"\nGuest: {FullName}");
+            Console.WriteLine($"Email: {Email}");
+            Console.WriteLine($"Ticket Purchased: ${(PaidTicket ? 200 : 0)}");
+            Console.WriteLine("Breakout Sessions:");
+            foreach (string session in BreakoutSessions)
+            {
+                Console.WriteLine($" - {session}");
+            }
+            Console.WriteLine($"Hotel Room Needed: {(NeedsHotel ? "Yes" : "No")}");
+            Console.WriteLine($"Courtesy Baggage Check: {(BaggageCheck ? "Yes" : "No")}");
         }
     }
 
-    // Guest Attendee Class
-    public class GuestAttendee
+    // Speaker Class
+    public class Speaker
     {
-        public string Name { get; set; }
-        public string BreakoutSession { get; set; }
-        public decimal TicketPrice { get; set; } = 200;
+        public string FullName { get; set; }
+        public string Company { get; set; }
+        public string Bio { get; set; }
+        public string PictureDesc { get; set; }
+        public string Subject { get; set; }
+        public string TimeSlot { get; set; }
+        public bool NeedsHotel { get; set; }
+        public bool BaggageCheck { get; set; }
 
         public void Display()
         {
-            Console.WriteLine("=== Guest Attendee ===");
-            Console.WriteLine($"Name: {Name}");
-            Console.WriteLine($"Breakout Session: {BreakoutSession}");
-            Console.WriteLine($"Ticket Price: ${TicketPrice}");
-            Console.WriteLine("------------------------------");
+            Console.WriteLine($"\nSpeaker: {FullName} from {Company}");
+            Console.WriteLine($"Bio: {Bio}");
+            Console.WriteLine($"Photo Description: {PictureDesc}");
+            Console.WriteLine($"Topic: {Subject}");
+            Console.WriteLine($"Speaking Time: {TimeSlot}");
+            Console.WriteLine($"Hotel Room Needed: {(NeedsHotel ? "Yes" : "No")}");
+            Console.WriteLine($"Courtesy Baggage Check: {(BaggageCheck ? "Yes" : "No")}");
         }
     }
 
     class Program
     {
-        static List<GuestSpeaker> speakers = new List<GuestSpeaker>();
-        static List<GuestAttendee> guests = new List<GuestAttendee>();
+        static List<Guest> guestList = new List<Guest>();
+        static List<Speaker> speakerList = new List<Speaker>();
 
         static void Main(string[] args)
         {
+            // Display Business Info
             Business biz = new Business
             {
-                Name = "TechConnect Services",
+                Name = "NetworkX Events",
                 Location = "Phoenix, AZ",
-                Contact = "info@techconnect.com",
-                Services = "Event Planning, Tech Services, Staffing",
-                SocialMedia = "@techconnect"
+                Contact = "info@networkxevents.com | (555) 123-4567",
+                Services = "Event Admissions, Vendor Management, Online Menus, HR Staffing",
+                SocialMedia = "@NetworkXEvents"
             };
-
             biz.DisplayInfo();
-            ShowMenu();
-        }
 
-        static void ShowMenu()
-        {
             while (true)
             {
                 Console.WriteLine("\n--- Main Menu ---");
-                Console.WriteLine("1. Register Guest Attendee");
-                Console.WriteLine("2. Register Guest Speaker");
+                Console.WriteLine("1. Register Guest");
+                Console.WriteLine("2. Register Speaker");
                 Console.WriteLine("3. View All Guests");
-                Console.WriteLine("4. View All Guest Speakers");
+                Console.WriteLine("4. View All Speakers");
                 Console.WriteLine("5. Exit");
-                Console.Write("Enter your choice: ");
+                Console.Write("Choose an option: ");
+                string option = Console.ReadLine();
 
-                string input = Console.ReadLine();
-
-                switch (input)
+                switch (option)
                 {
                     case "1":
                         RegisterGuest();
@@ -106,16 +110,16 @@ namespace ContinuousWinsConference
                         RegisterSpeaker();
                         break;
                     case "3":
-                        DisplayGuests();
+                        ShowGuests();
                         break;
                     case "4":
-                        DisplaySpeakers();
+                        ShowSpeakers();
                         break;
                     case "5":
-                        Console.WriteLine("Thanks for using the system. Goodbye!");
+                        Console.WriteLine("Thank you for using the system. Goodbye!");
                         return;
                     default:
-                        Console.WriteLine("Invalid input. Try again.");
+                        Console.WriteLine("Invalid choice. Try again.");
                         break;
                 }
             }
@@ -123,66 +127,107 @@ namespace ContinuousWinsConference
 
         static void RegisterGuest()
         {
-            GuestAttendee guest = new GuestAttendee();
-            Console.Write("Enter your name: ");
-            guest.Name = Console.ReadLine();
+            Console.WriteLine("\n--- Register Guest ---");
+            Console.Write("Full Name: ");
+            string name = Console.ReadLine();
 
-            Console.Write("Choose your breakout session (e.g., AI, Cloud, DevOps): ");
-            guest.BreakoutSession = Console.ReadLine();
+            Console.Write("Email: ");
+            string email = Console.ReadLine();
 
-            guests.Add(guest);
-            Console.WriteLine("✅ Guest registered successfully!");
+            Console.WriteLine("Enter breakout sessions (type 'done' to finish):");
+            List<string> sessions = new List<string>();
+            while (true)
+            {
+                string input = Console.ReadLine();
+                if (input.ToLower() == "done") break;
+                sessions.Add(input);
+            }
+
+            Console.Write("Do they need a hotel room? (yes/no): ");
+            bool hotel = Console.ReadLine().ToLower() == "yes";
+
+            Console.Write("Do they need baggage check? (yes/no): ");
+            bool baggage = Console.ReadLine().ToLower() == "yes";
+
+            guestList.Add(new Guest
+            {
+                FullName = name,
+                Email = email,
+                BreakoutSessions = sessions,
+                NeedsHotel = hotel,
+                BaggageCheck = baggage
+            });
+
+            Console.WriteLine("✅ Guest registered successfully. Ticket charged: $200.");
         }
 
         static void RegisterSpeaker()
         {
-            GuestSpeaker speaker = new GuestSpeaker();
+            Console.WriteLine("\n--- Register Speaker ---");
+            Console.Write("Full Name: ");
+            string name = Console.ReadLine();
 
-            Console.Write("Enter your full name: ");
-            speaker.Name = Console.ReadLine();
+            Console.Write("Company Name: ");
+            string company = Console.ReadLine();
 
-            Console.Write("Enter your company: ");
-            speaker.Company = Console.ReadLine();
+            Console.Write("Bio: ");
+            string bio = Console.ReadLine();
 
-            Console.Write("Enter your bio: ");
-            speaker.Bio = Console.ReadLine();
+            Console.Write("Photo description: ");
+            string pic = Console.ReadLine();
 
-            Console.Write("Enter the topic you'll speak on: ");
-            speaker.Topic = Console.ReadLine();
+            Console.Write("Speaking Subject: ");
+            string subject = Console.ReadLine();
 
-            Console.Write("Enter the date and time of your session: ");
-            speaker.DateTime = Console.ReadLine();
+            Console.Write("Time & Date of Presentation: ");
+            string time = Console.ReadLine();
 
-            Console.Write("Enter picture URL or file name (e.g., jane.jpg): ");
-            speaker.PictureUrl = Console.ReadLine();
+            Console.Write("Do they need a hotel room? (yes/no): ");
+            bool hotel = Console.ReadLine().ToLower() == "yes";
 
-            speakers.Add(speaker);
-            Console.WriteLine("✅ Speaker registered successfully!");
+            Console.Write("Do they need baggage check? (yes/no): ");
+            bool baggage = Console.ReadLine().ToLower() == "yes";
+
+            speakerList.Add(new Speaker
+            {
+                FullName = name,
+                Company = company,
+                Bio = bio,
+                PictureDesc = pic,
+                Subject = subject,
+                TimeSlot = time,
+                NeedsHotel = hotel,
+                BaggageCheck = baggage
+            });
+
+            Console.WriteLine("✅ Speaker registered successfully.");
         }
 
-        static void DisplayGuests()
+        static void ShowGuests()
         {
-            if (guests.Count == 0)
+            Console.WriteLine("\n=== Registered Guests ===");
+            if (guestList.Count == 0)
             {
-                Console.WriteLine("No guests registered yet.");
+                Console.WriteLine("No guests registered.");
                 return;
             }
 
-            foreach (var guest in guests)
+            foreach (var guest in guestList)
             {
                 guest.Display();
             }
         }
 
-        static void DisplaySpeakers()
+        static void ShowSpeakers()
         {
-            if (speakers.Count == 0)
+            Console.WriteLine("\n=== Registered Speakers ===");
+            if (speakerList.Count == 0)
             {
-                Console.WriteLine("No guest speakers registered yet.");
+                Console.WriteLine("No speakers registered.");
                 return;
             }
 
-            foreach (var speaker in speakers)
+            foreach (var speaker in speakerList)
             {
                 speaker.Display();
             }
